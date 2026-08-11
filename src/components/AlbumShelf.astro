@@ -20,7 +20,7 @@ const items = typeof limit === 'number' ? albums.slice(0, limit) : albums;
         <span class="album__play">▶</span>
       </span>
       <span class="album__title">{album.title}</span>
-      {album.itemCount && <span class="album__meta">{album.itemCount}曲</span>}
+      {album.itemCount > 0 && <span class="album__meta">{album.itemCount}曲</span>}
     </button>
   ))}
 </div>
