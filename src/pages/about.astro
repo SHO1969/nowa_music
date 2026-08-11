@@ -1,8 +1,12 @@
 ---
+import { getImage } from 'astro:assets';
 import BaseLayout from '../layouts/BaseLayout.astro';
+import portraitSource from '../assets/portrait.png';
 import { activeLinks } from '../lib/links.js';
 
 const links = activeLinks();
+// 人物写真はビルド時にwebpへ変換・縮小する（元は1500x2000の2.2MB）
+const portrait = await getImage({ src: portraitSource, format: 'webp', width: 900, quality: 78 });
 ---
 
 <BaseLayout title="ABOUT" description="Nowa Music について。夜にそっと寄り添う、女性ボーカルのJ-POPバラード。">
@@ -16,7 +20,7 @@ const links = activeLinks();
 
     <section class="section">
       <div class="container profile">
-        <div class="profile__art reveal"></div>
+        <div class="profile__art reveal" style={`--profile-image: url(${portrait.src})`}></div>
         <div class="profile__text reveal">
           <p>夜にそっと寄り添う、女性ボーカルのJ-POPバラード。</p>
           <p>言えなかった気持ち、忘れられない名前、あの頃の恋。<br />そして、一日をやり終えて、ひとりになった夜の時間。</p>
@@ -54,11 +58,11 @@ const links = activeLinks();
   .profile__art {
     aspect-ratio: 3 / 4;
     border: 1px solid var(--line);
-    /* キャラクター画像（src/assets/portrait.jpg）が届いたら、2つ目の
-       linear-gradient(140deg, ...) を url('../assets/portrait.jpg') に置き換える。
-       現在は未提供のためグラデーションのみ。 */
+    /* --profile-image は上のインラインstyleで最適化済み画像のURLが入る。
+       画像を外した場合は下のグラデーションだけが残る。 */
     background:
       linear-gradient(180deg, var(--profile-scrim-near), var(--profile-scrim-far)),
+      var(--profile-image, none),
       linear-gradient(140deg, var(--bg-mid), var(--bg-far));
     background-size: cover;
     background-position: center;

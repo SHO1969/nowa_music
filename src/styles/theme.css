@@ -10,8 +10,8 @@
   --media-bg: #000;
   --hero-scrim-near: rgba(7, 13, 28, 0.35);
   --hero-scrim-far: rgba(7, 13, 28, 0.75);
-  --profile-scrim-near: rgba(7, 13, 28, 0.2);
-  --profile-scrim-far: rgba(7, 13, 28, 0.85);
+  --profile-scrim-near: rgba(7, 13, 28, 0.1);
+  --profile-scrim-far: rgba(7, 13, 28, 0.45);
   --bg-glow: rgba(157, 180, 224, 0.1);
   --font-serif: "Noto Serif JP", "Yu Mincho", "Hiragino Mincho ProN", serif;
   --page-max: 68rem;
