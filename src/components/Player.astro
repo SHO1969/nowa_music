@@ -1,0 +1,111 @@
+---
+// 画面全体をおおうプレイヤー。data-play を持つ要素のクリックで開く。
+---
+
+<div class="player" id="player" hidden>
+  <div class="player__backdrop" data-player-close></div>
+  <div class="player__panel" role="dialog" aria-modal="true" aria-label="プレイヤー">
+    <button class="player__close" type="button" data-player-close aria-label="閉じる">×</button>
+    <div class="player__frame" id="player-frame"></div>
+    <p class="player__title" id="player-title"></p>
+  </div>
+</div>
+
+<style>
+  .player {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: grid;
+    place-items: center;
+    padding: 1rem;
+  }
+  .player[hidden] { display: none; }
+  .player__backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(4, 8, 18, 0.88);
+    backdrop-filter: blur(6px);
+  }
+  .player__panel {
+    position: relative;
+    width: min(100%, 56rem);
+  }
+  .player__close {
+    position: absolute;
+    top: -2.6rem;
+    right: 0;
+    background: none;
+    border: none;
+    color: var(--text);
+    font-size: 1.8rem;
+    line-height: 1;
+    cursor: pointer;
+    padding: 0.25rem 0.5rem;
+  }
+  .player__close:hover { color: var(--accent); }
+  .player__frame {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    background: #000;
+    border: 1px solid var(--line);
+  }
+  .player__frame :global(iframe) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+  }
+  .player__title {
+    margin: 1rem 0 0;
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    text-align: center;
+  }
+</style>
+
+<script>
+  import { embedUrl } from '../lib/embed.js';
+
+  const player = document.getElementById('player');
+  const frame = document.getElementById('player-frame');
+  const titleEl = document.getElementById('player-title');
+
+  function open(kind, id, title) {
+    const src = embedUrl(kind, id);
+    if (!src) return;
+    const iframe = document.createElement('iframe');
+    iframe.src = src;
+    iframe.title = title || 'Nowa Music';
+    iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; picture-in-picture';
+    iframe.allowFullscreen = true;
+    frame.replaceChildren(iframe);
+    titleEl.textContent = title || '';
+    player.hidden = false;
+    document.body.style.overflow = 'hidden';
+  }
+
+  function close() {
+    // iframeを消さないと音が鳴り続ける
+    frame.replaceChildren();
+    titleEl.textContent = '';
+    player.hidden = true;
+    document.body.style.overflow = '';
+  }
+
+  document.addEventListener('click', (event) => {
+    const trigger = event.target.closest('[data-play]');
+    if (trigger) {
+      event.preventDefault();
+      const [kind, id] = trigger.dataset.play.split(':');
+      open(kind, id, trigger.dataset.title);
+      return;
+    }
+    if (event.target.closest('[data-player-close]')) close();
+  });
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && !player.hidden) close();
+  });
+</script>
