@@ -24,7 +24,7 @@
   .player__backdrop {
     position: absolute;
     inset: 0;
-    background: rgba(4, 8, 18, 0.88);
+    background: var(--overlay);
     backdrop-filter: blur(6px);
   }
   .player__panel {
@@ -47,7 +47,7 @@
   .player__frame {
     position: relative;
     aspect-ratio: 16 / 9;
-    background: #000;
+    background: var(--media-bg);
     border: 1px solid var(--line);
   }
   .player__frame :global(iframe) {

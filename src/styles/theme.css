@@ -6,6 +6,8 @@
   --text-dim: rgba(232, 237, 247, 0.62);
   --accent: #9db4e0;
   --line: rgba(157, 180, 224, 0.22);
+  --overlay: rgba(4, 8, 18, 0.88);
+  --media-bg: #000;
   --font-serif: "Noto Serif JP", "Yu Mincho", "Hiragino Mincho ProN", serif;
   --page-max: 68rem;
 }
