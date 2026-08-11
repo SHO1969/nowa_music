@@ -8,6 +8,8 @@
   --line: rgba(157, 180, 224, 0.22);
   --overlay: rgba(4, 8, 18, 0.88);
   --media-bg: #000;
+  --hero-scrim-near: rgba(7, 13, 28, 0.35);
+  --hero-scrim-far: rgba(7, 13, 28, 0.75);
   --font-serif: "Noto Serif JP", "Yu Mincho", "Hiragino Mincho ProN", serif;
   --page-max: 68rem;
 }
