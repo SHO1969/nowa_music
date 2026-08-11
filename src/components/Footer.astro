@@ -1,0 +1,40 @@
+---
+import { activeLinks, CONTACT_EMAIL } from '../lib/links.js';
+
+const links = activeLinks();
+const year = new Date().getFullYear();
+---
+
+<footer class="footer">
+  <div class="container">
+    <nav class="footer__links">
+      {links.map((link) => (
+        <a href={link.url} target="_blank" rel="noopener">{link.label}</a>
+      ))}
+    </nav>
+    {CONTACT_EMAIL && (
+      <p class="footer__mail"><a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a></p>
+    )}
+    <p class="footer__copy">© {year} Nowa Music</p>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    border-top: 1px solid var(--line);
+    padding-block: 3rem 4rem;
+    text-align: center;
+    color: var(--text-dim);
+  }
+  .footer__links {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1.25rem 2rem;
+    font-size: 0.75rem;
+    letter-spacing: 0.18em;
+  }
+  .footer__links a:hover { color: var(--accent); }
+  .footer__mail { font-size: 0.8rem; margin: 1.5rem 0 0; }
+  .footer__copy { font-size: 0.7rem; letter-spacing: 0.2em; margin: 2rem 0 0; }
+</style>
