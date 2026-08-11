@@ -72,7 +72,7 @@ const items = typeof limit === 'number' ? albums.slice(0, limit) : albums;
     color: var(--text);
     opacity: 0;
     transition: opacity 0.4s ease;
-    text-shadow: 0 0 1rem rgba(4, 8, 18, 0.9);
+    text-shadow: 0 0 1rem var(--overlay);
   }
   .album:hover .album__art img,
   .album:focus-visible .album__art img { opacity: 1; transform: scale(1.03); }
