@@ -1,0 +1,69 @@
+name: 更新と公開
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    # 毎日 06:00 JST（UTC 21:00）
+    - cron: '0 21 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - run: npm ci
+
+      - name: テスト
+        run: npm test
+
+      - name: YouTubeから取得
+        env:
+          YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+          YOUTUBE_CHANNEL_ID: ${{ secrets.YOUTUBE_CHANNEL_ID }}
+        run: node scripts/fetch-youtube.mjs
+
+      - name: 変更があれば取得結果をコミット
+        run: |
+          if [ -n "$(git status --porcelain src/data/youtube.json)" ]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add src/data/youtube.json
+            git commit -m "chore: YouTubeのデータを更新"
+            git push
+          else
+            echo "更新なし"
+          fi
+
+      - name: ビルド
+        run: npm run build
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
