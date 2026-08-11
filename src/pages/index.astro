@@ -1,9 +1,14 @@
 ---
+import { getImage } from 'astro:assets';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import AlbumShelf from '../components/AlbumShelf.astro';
+import heroSource from '../assets/hero.png';
 import raw from '../data/youtube.json';
 import { buildCatalog } from '../lib/catalog.js';
 import { activeLinks } from '../lib/links.js';
+
+// ヒーロー画像はビルド時にwebpへ変換・縮小する（元は900x1600の1.3MB）
+const hero = await getImage({ src: heroSource, format: 'webp', width: 900, quality: 78 });
 
 const { albums } = buildCatalog(raw);
 const links = activeLinks();
@@ -15,7 +20,7 @@ const tonightPlay = tonight ? `${tonight.kind ?? 'video'}:${tonight.id}` : '';
 <BaseLayout>
   <main>
     <section class="hero">
-      <div class="hero__art"></div>
+      <div class="hero__art" style={`--hero-image: url(${hero.src})`}></div>
       <div class="container hero__body">
         <p class="hero__label">NOWA MUSIC</p>
         <h1 class="hero__copy">夜が、<br />ひとりを<br />やさしくする。</h1>
@@ -83,10 +88,11 @@ const tonightPlay = tonight ? `${tonight.kind ?? 'video'}:${tonight.id}` : '';
   .hero__art {
     position: absolute;
     inset: 0;
-    /* オーナーからキャラクター画像（縦長）を受け取ったら、この background-image に
-       url('../assets/hero.jpg') を追加する。現在は未提供のためグラデーションのみ。 */
+    /* --hero-image は上のインラインstyleで最適化済み画像のURLが入る。
+       画像を外した場合は none に落ちてグラデーションだけが残る。 */
     background-image:
-      linear-gradient(180deg, var(--hero-scrim-near) 0%, var(--hero-scrim-far) 55%, var(--bg-deep) 100%);
+      linear-gradient(180deg, var(--hero-scrim-near) 0%, var(--hero-scrim-far) 55%, var(--bg-deep) 100%),
+      var(--hero-image, none);
     background-size: cover;
     background-position: center 20%;
   }
