@@ -1,15 +1,14 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import AlbumShelf from '../components/AlbumShelf.astro';
-import TrackList from '../components/TrackList.astro';
 import raw from '../data/youtube.json';
 import { buildCatalog } from '../lib/catalog.js';
 import { activeLinks } from '../lib/links.js';
 
-const { albums, tracks } = buildCatalog(raw);
+const { albums } = buildCatalog(raw);
 const links = activeLinks();
-// ヒーローの再生ボタンは最新の1曲（無ければ最新アルバム）
-const tonight = tracks[0] ?? albums[0];
+// ヒーローの再生ボタンは最新のアルバム
+const tonight = albums[0];
 const tonightPlay = tonight ? `${tonight.kind ?? 'video'}:${tonight.id}` : '';
 ---
 
@@ -22,7 +21,7 @@ const tonightPlay = tonight ? `${tonight.kind ?? 'video'}:${tonight.id}` : '';
         <h1 class="hero__copy">夜が、<br />ひとりを<br />やさしくする。</h1>
         {tonight && (
           <button class="hero__play" type="button" data-play={tonightPlay} data-title={tonight.title}>
-            ▶ 今夜の1曲
+            ▶ 今夜の1枚
           </button>
         )}
       </div>
@@ -43,17 +42,6 @@ const tonightPlay = tonight ? `${tonight.kind ?? 'video'}:${tonight.id}` : '';
           <h2 class="section__title">ゆっくり流せる、夜のためのアルバム。</h2>
           <AlbumShelf albums={albums} limit={8} />
           {albums.length > 8 && <p class="more"><a href="/music/">すべてのアルバムを見る</a></p>}
-        </div>
-      </section>
-    )}
-
-    {tracks.length > 0 && (
-      <section class="section" id="tracks">
-        <div class="container reveal">
-          <p class="section__label">NEW SONGS</p>
-          <h2 class="section__title">新しい歌。</h2>
-          <TrackList tracks={tracks} limit={6} />
-          {tracks.length > 6 && <p class="more"><a href="/music/">楽曲をもっと見る</a></p>}
         </div>
       </section>
     )}

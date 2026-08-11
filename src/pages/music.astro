@@ -1,11 +1,10 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import AlbumShelf from '../components/AlbumShelf.astro';
-import TrackList from '../components/TrackList.astro';
 import raw from '../data/youtube.json';
 import { buildCatalog } from '../lib/catalog.js';
 
-const { albums, tracks } = buildCatalog(raw);
+const { albums } = buildCatalog(raw);
 ---
 
 <BaseLayout title="MUSIC" description="Nowa Music のアルバムと最新の楽曲。夜にそっと寄り添う女性ボーカルのJ-POPバラード。">
@@ -22,15 +21,6 @@ const { albums, tracks } = buildCatalog(raw);
         <div class="container reveal">
           <h2 class="section__title">ALBUM</h2>
           <AlbumShelf albums={albums} />
-        </div>
-      </section>
-    )}
-
-    {tracks.length > 0 && (
-      <section class="section">
-        <div class="container reveal">
-          <h2 class="section__title">SONGS</h2>
-          <TrackList tracks={tracks} />
         </div>
       </section>
     )}
