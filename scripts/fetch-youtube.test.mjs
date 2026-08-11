@@ -146,13 +146,21 @@ test('fetchChannelData: uploads が複数ページにまたがる場合、両ペ
         { items: [{ contentDetails: { videoId: 'v3' } }] },
       ],
     ],
-    ['/videos?', () => ({
-      items: [
-        { id: 'v1', snippet: { title: 'A', description: '', publishedAt: '2026-01-01T00:00:00Z', thumbnails: { high: { url: 'a.jpg' } } }, contentDetails: { duration: 'PT4M0S' } },
-        { id: 'v2', snippet: { title: 'B', description: '', publishedAt: '2026-02-01T00:00:00Z', thumbnails: { high: { url: 'b.jpg' } } }, contentDetails: { duration: 'PT1H0M0S' } },
-        { id: 'v3', snippet: { title: 'C', description: '', publishedAt: '2026-03-01T00:00:00Z', thumbnails: { high: { url: 'c.jpg' } } }, contentDetails: { duration: 'PT3M0S' } },
-      ],
-    })],
+    [
+      '/videos?',
+      (n, url) => {
+        // 要求されたid=パラメータに含まれるIDだけを返す。
+        // videoIds の蓄積がページをまたいで取りこぼす（上書きされる等）バグがあれば、
+        // ここで要求IDが変わり、data.videos の中身が変わってテストが落ちるようにする。
+        const requestedIds = new URL(url).searchParams.get('id').split(',');
+        const all = {
+          v1: { id: 'v1', snippet: { title: 'A', description: '', publishedAt: '2026-01-01T00:00:00Z', thumbnails: { high: { url: 'a.jpg' } } }, contentDetails: { duration: 'PT4M0S' } },
+          v2: { id: 'v2', snippet: { title: 'B', description: '', publishedAt: '2026-02-01T00:00:00Z', thumbnails: { high: { url: 'b.jpg' } } }, contentDetails: { duration: 'PT1H0M0S' } },
+          v3: { id: 'v3', snippet: { title: 'C', description: '', publishedAt: '2026-03-01T00:00:00Z', thumbnails: { high: { url: 'c.jpg' } } }, contentDetails: { duration: 'PT3M0S' } },
+        };
+        return { items: requestedIds.map((id) => all[id]).filter(Boolean) };
+      },
+    ],
     ['/playlists?', () => ({ items: [] })],
   ]);
 
