@@ -22,6 +22,7 @@ const fullTitle = title ? `${title} | Nowa Music` : 'Nowa Music';
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
+    <!-- theme-colorはmeta属性でCSS変数を使えないため、--bg-deepと同じ値を直書きしている（色リテラル制約の例外） -->
     <meta name="theme-color" content="#070d1c" />
     <link rel="canonical" href={new URL(Astro.url.pathname, Astro.site)} />
     <link rel="preconnect" href="https://fonts.googleapis.com" />

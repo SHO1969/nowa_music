@@ -14,71 +14,73 @@ const tonightPlay = tonight ? `${tonight.kind ?? 'video'}:${tonight.id}` : '';
 ---
 
 <BaseLayout>
-  <section class="hero">
-    <div class="hero__art"></div>
-    <div class="container hero__body">
-      <p class="hero__label">NOWA MUSIC</p>
-      <h1 class="hero__copy">夜が、<br />ひとりを<br />やさしくする。</h1>
-      {tonight && (
-        <button class="hero__play" type="button" data-play={tonightPlay} data-title={tonight.title}>
-          ▶ 今夜の1曲
-        </button>
-      )}
-    </div>
-  </section>
-
-  <section class="section words">
-    <div class="container">
-      <p class="reveal">言えなかった気持ち、忘れられない名前、あの頃の恋。</p>
-      <p class="reveal">そして、一日をやり終えて、ひとりになった夜の時間。</p>
-      <p class="reveal">大人になった今だからわかる感情を、静かな歌にしています。</p>
-    </div>
-  </section>
-
-  {albums.length > 0 && (
-    <section class="section" id="albums">
-      <div class="container reveal">
-        <p class="section__label">ALBUM</p>
-        <h2 class="section__title">ゆっくり流せる、夜のためのアルバム。</h2>
-        <AlbumShelf albums={albums} limit={8} />
-        {albums.length > 8 && <p class="more"><a href="/music/">すべてのアルバムを見る</a></p>}
+  <main>
+    <section class="hero">
+      <div class="hero__art"></div>
+      <div class="container hero__body">
+        <p class="hero__label">NOWA MUSIC</p>
+        <h1 class="hero__copy">夜が、<br />ひとりを<br />やさしくする。</h1>
+        {tonight && (
+          <button class="hero__play" type="button" data-play={tonightPlay} data-title={tonight.title}>
+            ▶ 今夜の1曲
+          </button>
+        )}
       </div>
     </section>
-  )}
 
-  {tracks.length > 0 && (
-    <section class="section" id="tracks">
-      <div class="container reveal">
-        <p class="section__label">NEW SONGS</p>
-        <h2 class="section__title">新しい歌。</h2>
-        <TrackList tracks={tracks} limit={6} />
-        {tracks.length > 6 && <p class="more"><a href="/music/">楽曲をもっと見る</a></p>}
+    <section class="section words">
+      <div class="container">
+        <p class="reveal">言えなかった気持ち、忘れられない名前、あの頃の恋。</p>
+        <p class="reveal">そして、一日をやり終えて、ひとりになった夜の時間。</p>
+        <p class="reveal">大人になった今だからわかる感情を、静かな歌にしています。</p>
       </div>
     </section>
-  )}
 
-  <section class="section" id="about">
-    <div class="container reveal about">
-      <p class="section__label">ABOUT</p>
-      <h2 class="section__title">Nowa について</h2>
-      <p>眠れない夜、疲れた夜、ひとりで過ごす時間に。<br />オリジナルの単曲と、ゆっくり流せる1時間のプレイリストをお届けしています。</p>
-      <p class="more"><a href="/about/">もっと読む</a></p>
-    </div>
-  </section>
+    {albums.length > 0 && (
+      <section class="section" id="albums">
+        <div class="container reveal">
+          <p class="section__label">ALBUM</p>
+          <h2 class="section__title">ゆっくり流せる、夜のためのアルバム。</h2>
+          <AlbumShelf albums={albums} limit={8} />
+          {albums.length > 8 && <p class="more"><a href="/music/">すべてのアルバムを見る</a></p>}
+        </div>
+      </section>
+    )}
 
-  {links.length > 0 && (
-    <section class="section" id="listen">
-      <div class="container reveal">
-        <p class="section__label">LISTEN</p>
-        <h2 class="section__title">聴けるところ</h2>
-        <ul class="listen">
-          {links.map((link) => (
-            <li><a href={link.url} target="_blank" rel="noopener">{link.label}</a></li>
-          ))}
-        </ul>
+    {tracks.length > 0 && (
+      <section class="section" id="tracks">
+        <div class="container reveal">
+          <p class="section__label">NEW SONGS</p>
+          <h2 class="section__title">新しい歌。</h2>
+          <TrackList tracks={tracks} limit={6} />
+          {tracks.length > 6 && <p class="more"><a href="/music/">楽曲をもっと見る</a></p>}
+        </div>
+      </section>
+    )}
+
+    <section class="section" id="about">
+      <div class="container reveal about">
+        <p class="section__label">ABOUT</p>
+        <h2 class="section__title">Nowa について</h2>
+        <p>眠れない夜、疲れた夜、ひとりで過ごす時間に。<br />オリジナルの単曲と、ゆっくり流せる1時間のプレイリストをお届けしています。</p>
+        <p class="more"><a href="/about/">もっと読む</a></p>
       </div>
     </section>
-  )}
+
+    {links.length > 0 && (
+      <section class="section" id="listen">
+        <div class="container reveal">
+          <p class="section__label">LISTEN</p>
+          <h2 class="section__title">聴けるところ</h2>
+          <ul class="listen">
+            {links.map((link) => (
+              <li><a href={link.url} target="_blank" rel="noopener">{link.label}</a></li>
+            ))}
+          </ul>
+        </div>
+      </section>
+    )}
+  </main>
 </BaseLayout>
 
 <style>

@@ -71,10 +71,13 @@
   const player = document.getElementById('player');
   const frame = document.getElementById('player-frame');
   const titleEl = document.getElementById('player-title');
+  const closeButton = document.querySelector('[data-player-close].player__close');
+  let lastFocused = null;
 
   function open(kind, id, title) {
     const src = embedUrl(kind, id);
     if (!src) return;
+    lastFocused = document.activeElement;
     const iframe = document.createElement('iframe');
     iframe.src = src;
     iframe.title = title || 'Nowa Music';
@@ -84,6 +87,7 @@
     titleEl.textContent = title || '';
     player.hidden = false;
     document.body.style.overflow = 'hidden';
+    closeButton?.focus();
   }
 
   function close() {
@@ -92,6 +96,9 @@
     titleEl.textContent = '';
     player.hidden = true;
     document.body.style.overflow = '';
+    // 開く前にフォーカスしていた要素へ戻す
+    lastFocused?.focus?.();
+    lastFocused = null;
   }
 
   document.addEventListener('click', (event) => {

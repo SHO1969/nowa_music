@@ -1,6 +1,13 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { pickThumbnail, normalizeVideo, normalizePlaylist, fetchChannelData } from './fetch-youtube.mjs';
+import {
+  pickThumbnail,
+  normalizeVideo,
+  normalizePlaylist,
+  fetchChannelData,
+  MAX_VIDEOS,
+  MAX_PLAYLIST_PAGES,
+} from './fetch-youtube.mjs';
 
 test('pickThumbnail: 大きいものを優先する', () => {
   const thumbs = {
@@ -207,7 +214,19 @@ test('fetchChannelData: playlists が複数ページにまたがる場合、両�
   assert.ok(playlistsCalls[1].includes('pageToken=PAGE2'), '2ページ目にはnextPageTokenを引き継ぐ');
 });
 
-test('fetchChannelData: nextPageToken が返り続けても MAX_VIDEOS で打ち切る（無限ループしない）', async () => {
+test('MAX_VIDEOS: 本番の上限値が想定どおり（クォータではなく安全弁としての値）', () => {
+  assert.equal(MAX_VIDEOS, 1500);
+});
+
+test('MAX_PLAYLIST_PAGES: 本番の上限値が想定どおり', () => {
+  assert.equal(MAX_PLAYLIST_PAGES, 20);
+});
+
+test('fetchChannelData: nextPageToken が返り続けても maxVideos で打ち切る（無限ループしない）', async () => {
+  // 本番の MAX_VIDEOS（1500件・30ページ）で丸ごと検証すると遅くなるため、
+  // テストでは maxVideos を注入して小さい上限（150件・3ページ）で同じ打ち切りロジックを検証する。
+  // 上限そのものの値は上の「MAX_VIDEOS: 本番の上限値」テストで別途ピン留めしている。
+  const injectedMaxVideos = 150;
   const fetchImpl = makeSequencedFetch([
     ['/channels?', () => ({ items: [{ contentDetails: { relatedPlaylists: { uploads: 'UU123' } } }] })],
     // 何回呼ばれても常に50件 + nextPageTokenを返し続ける（本番でチャンネルの動画がどれだけ増えても打ち切られることを確認する）
@@ -234,12 +253,44 @@ test('fetchChannelData: nextPageToken が返り続けても MAX_VIDEOS で打ち
     ['/playlists?', () => ({ items: [] })],
   ]);
 
-  const data = await fetchChannelData({ apiKey: 'KEY', channelId: 'UCtest', fetchImpl });
+  const data = await fetchChannelData({ apiKey: 'KEY', channelId: 'UCtest', fetchImpl, maxVideos: injectedMaxVideos });
 
-  assert.equal(data.videos.length, 300);
+  assert.equal(data.videos.length, injectedMaxVideos);
   assert.equal(data.videos[0].id, 'v0');
-  assert.equal(data.videos[299].id, 'v299');
+  assert.equal(data.videos[injectedMaxVideos - 1].id, `v${injectedMaxVideos - 1}`);
 
   const playlistItemsCalls = fetchImpl.calls.filter((u) => u.includes('/playlistItems?'));
-  assert.equal(playlistItemsCalls.length, 300 / 50);
+  assert.equal(playlistItemsCalls.length, injectedMaxVideos / 50);
+});
+
+test('fetchChannelData: nextPageToken が返り続けても maxPlaylistPages で打ち切る（無限ループしない）', async () => {
+  // uploadsの動画側と対称に、再生リストのページングにも上限があることを検証する。
+  // 本番の MAX_PLAYLIST_PAGES（20ページ）そのままでも十分高速だが、意図を明確にするため注入する。
+  const injectedMaxPages = 3;
+  const fetchImpl = makeSequencedFetch([
+    ['/channels?', () => ({ items: [{ contentDetails: { relatedPlaylists: { uploads: 'UU123' } } }] })],
+    ['/playlistItems?', () => ({ items: [] })],
+    ['/videos?', () => ({ items: [] })],
+    // 何回呼ばれても常に1件 + nextPageTokenを返し続ける
+    [
+      '/playlists?',
+      (n) => ({
+        items: [
+          {
+            id: `PL${n}`,
+            snippet: { title: `アルバム${n}`, description: '', publishedAt: '2026-01-01T00:00:00Z', thumbnails: { high: { url: `p${n}.jpg` } } },
+            contentDetails: { itemCount: 1 },
+          },
+        ],
+        nextPageToken: 'MORE',
+      }),
+    ],
+  ]);
+
+  const data = await fetchChannelData({ apiKey: 'KEY', channelId: 'UCtest', fetchImpl, maxPlaylistPages: injectedMaxPages });
+
+  assert.equal(data.playlists.length, injectedMaxPages);
+
+  const playlistsCalls = fetchImpl.calls.filter((u) => u.includes('/playlists?'));
+  assert.equal(playlistsCalls.length, injectedMaxPages);
 });

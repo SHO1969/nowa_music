@@ -11,7 +11,7 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "fetch": "node --env-file=.env scripts/fetch-youtube.mjs",
+    "fetch": "node --env-file-if-exists=.env scripts/fetch-youtube.mjs",
     "test": "node --test"
   },
   "keywords": [],

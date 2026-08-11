@@ -19,6 +19,36 @@ test('parseDuration: 壊れた値は0', () => {
   assert.equal(parseDuration(undefined), 0);
 });
 
+test('parseDuration: 分のみ（秒の指定なし）', () => {
+  assert.equal(parseDuration('PT20M'), 1200);
+});
+
+test('境界値: 1200秒ちょうど（PT20M0S）はアルバム側に入り、楽曲側には入らない', () => {
+  const boundary = {
+    channelId: 'UCtest',
+    videos: [
+      { id: 'b1', title: 'ちょうど20分', description: '', thumbnail: 'tb1', publishedAt: '2026-04-01T00:00:00Z', duration: 'PT20M0S' },
+    ],
+    playlists: [],
+  };
+  const { albums, tracks } = buildCatalog(boundary);
+  assert.deepEqual(albums.map((a) => a.id), ['b1']);
+  assert.deepEqual(tracks.map((t) => t.id), []);
+});
+
+test('境界値: 60秒ちょうど（PT1M0S）は楽曲側に入る（Shortsとして除外されない）', () => {
+  const boundary = {
+    channelId: 'UCtest',
+    videos: [
+      { id: 'b2', title: 'ちょうど1分', description: '', thumbnail: 'tb2', publishedAt: '2026-04-01T00:00:00Z', duration: 'PT1M0S' },
+    ],
+    playlists: [],
+  };
+  const { albums, tracks } = buildCatalog(boundary);
+  assert.deepEqual(albums.map((a) => a.id), []);
+  assert.deepEqual(tracks.map((t) => t.id), ['b2']);
+});
+
 const raw = {
   channelId: 'UCtest',
   videos: [

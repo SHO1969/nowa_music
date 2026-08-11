@@ -7,7 +7,7 @@ const year = new Date().getFullYear();
 
 <footer class="footer">
   <div class="container">
-    <nav class="footer__links">
+    <nav class="footer__links" aria-label="外部リンク">
       {links.map((link) => (
         <a href={link.url} target="_blank" rel="noopener">{link.label}</a>
       ))}

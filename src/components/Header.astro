@@ -9,7 +9,7 @@ const items = [
 <header class="header">
   <div class="container header__inner">
     <a class="header__logo" href="/">NOWA</a>
-    <nav class="header__nav">
+    <nav class="header__nav" aria-label="メインメニュー">
       {items.map((item) => (
         <a href={item.href} aria-current={path.startsWith(item.href) ? 'page' : undefined}>
           {item.label}

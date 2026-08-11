@@ -2,8 +2,16 @@ import { writeFile } from 'node:fs/promises';
 
 const API = 'https://www.googleapis.com/youtube/v3';
 const OUTPUT = new URL('../src/data/youtube.json', import.meta.url);
-/** 取得する動画の上限。1回のビルドで消費するクォータを抑えるため。 */
-const MAX_VIDEOS = 300;
+/**
+ * 取得する動画の上限。無限ループ防止のための安全弁で、クォータを気にする必要はない
+ * （playlistItems.list・videos.listは1回1ユニットで、1500本取得しても消費は1日の
+ * 無料枠1万ユニットのごく一部）。この上限に達すると、それより古い動画（20分超の
+ * 長尺アルバムを含む）が棚から静かに載らなくなるので、チャンネルの動画数が
+ * この値に近づいてきたら引き上げること。
+ */
+export const MAX_VIDEOS = 1500;
+/** 公開再生リストのページング上限（ページ数）。uploadsの動画と同様、無限ループを避けるための安全弁。 */
+export const MAX_PLAYLIST_PAGES = 20;
 
 /** 一番大きいサムネイルのURLを返す。 */
 export function pickThumbnail(thumbnails) {
@@ -46,7 +54,13 @@ async function callApi(fetchImpl, url) {
 }
 
 /** チャンネルの動画と公開再生リストをまとめて取得する。 */
-export async function fetchChannelData({ apiKey, channelId, fetchImpl = globalThis.fetch }) {
+export async function fetchChannelData({
+  apiKey,
+  channelId,
+  fetchImpl = globalThis.fetch,
+  maxVideos = MAX_VIDEOS,
+  maxPlaylistPages = MAX_PLAYLIST_PAGES,
+}) {
   if (!apiKey) throw new Error('YOUTUBE_API_KEY が設定されていません');
   if (!channelId) throw new Error('YOUTUBE_CHANNEL_ID が設定されていません');
 
@@ -70,7 +84,7 @@ export async function fetchChannelData({ apiKey, channelId, fetchImpl = globalTh
       if (item.contentDetails?.videoId) videoIds.push(item.contentDetails.videoId);
     }
     pageToken = page.nextPageToken ?? '';
-  } while (pageToken && videoIds.length < MAX_VIDEOS);
+  } while (pageToken && videoIds.length < maxVideos);
 
   // 50件ずつ詳細（再生時間）を取る
   const videos = [];
@@ -86,6 +100,7 @@ export async function fetchChannelData({ apiKey, channelId, fetchImpl = globalTh
   // 公開再生リスト
   const playlists = [];
   pageToken = '';
+  let playlistPage = 0;
   do {
     const page = await callApi(
       fetchImpl,
@@ -94,7 +109,8 @@ export async function fetchChannelData({ apiKey, channelId, fetchImpl = globalTh
     );
     for (const item of page.items ?? []) playlists.push(normalizePlaylist(item));
     pageToken = page.nextPageToken ?? '';
-  } while (pageToken);
+    playlistPage += 1;
+  } while (pageToken && playlistPage < maxPlaylistPages);
 
   return { channelId, videos, playlists };
 }
