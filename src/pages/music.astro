@@ -1,0 +1,49 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import AlbumShelf from '../components/AlbumShelf.astro';
+import TrackList from '../components/TrackList.astro';
+import raw from '../data/youtube.json';
+import { buildCatalog } from '../lib/catalog.js';
+
+const { albums, tracks } = buildCatalog(raw);
+---
+
+<BaseLayout title="MUSIC" description="Nowa Music のアルバムと最新の楽曲。夜にそっと寄り添う女性ボーカルのJ-POPバラード。">
+  <main>
+    <section class="section head">
+      <div class="container">
+        <p class="section__label">MUSIC</p>
+        <h1 class="section__title">夜のための、アルバムと歌。</h1>
+        <p class="more">
+          <a href="https://www.youtube.com/@nowa_music_jp/videos" target="_blank" rel="noopener">
+            もっと聴く（YouTubeチャンネル）
+          </a>
+        </p>
+      </div>
+    </section>
+
+    {albums.length > 0 && (
+      <section class="section">
+        <div class="container reveal">
+          <h2 class="section__title">ALBUM</h2>
+          <AlbumShelf albums={albums} />
+        </div>
+      </section>
+    )}
+
+    {tracks.length > 0 && (
+      <section class="section">
+        <div class="container reveal">
+          <h2 class="section__title">SONGS</h2>
+          <TrackList tracks={tracks} />
+        </div>
+      </section>
+    )}
+  </main>
+</BaseLayout>
+
+<style>
+  .head { padding-top: 9rem; }
+  .more { margin-top: 2.5rem; font-size: 0.78rem; letter-spacing: 0.18em; }
+  .more a { color: var(--accent); border-bottom: 1px solid var(--line); padding-bottom: 0.2rem; }
+</style>
