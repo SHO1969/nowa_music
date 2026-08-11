@@ -1,0 +1,57 @@
+---
+const { tracks = [], limit } = Astro.props;
+const items = typeof limit === 'number' ? tracks.slice(0, limit) : tracks;
+---
+
+<ol class="tracks">
+  {items.map((track, index) => (
+    <li>
+      <button class="track" type="button" data-play={`video:${track.id}`} data-title={track.title}>
+        <span class="track__no">{String(index + 1).padStart(2, '0')}</span>
+        <span class="track__title">{track.title}</span>
+        <span class="track__time">{track.label}</span>
+      </button>
+    </li>
+  ))}
+</ol>
+
+<style>
+  .tracks {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-top: 1px solid var(--line);
+  }
+  .tracks li { border-bottom: 1px solid var(--line); }
+  .track {
+    display: grid;
+    grid-template-columns: 2.5rem 1fr auto;
+    align-items: center;
+    gap: 1rem;
+    width: 100%;
+    padding: 1.1rem 0.25rem;
+    background: none;
+    border: none;
+    color: inherit;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+    transition: color 0.4s ease;
+  }
+  .track:hover, .track:focus-visible { color: var(--accent); }
+  .track__no {
+    font-size: 0.7rem;
+    letter-spacing: 0.16em;
+    color: var(--text-dim);
+  }
+  .track__title {
+    font-size: 0.92rem;
+    line-height: 1.6;
+  }
+  .track__time {
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    color: var(--text-dim);
+    font-variant-numeric: tabular-nums;
+  }
+</style>
