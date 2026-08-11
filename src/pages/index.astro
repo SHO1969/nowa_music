@@ -35,23 +35,27 @@ const tonightPlay = tonight ? `${tonight.kind ?? 'video'}:${tonight.id}` : '';
     </div>
   </section>
 
-  <section class="section" id="albums">
-    <div class="container reveal">
-      <p class="section__label">ALBUM</p>
-      <h2 class="section__title">ゆっくり流せる、夜のためのアルバム。</h2>
-      <AlbumShelf albums={albums} limit={8} />
-      {albums.length > 8 && <p class="more"><a href="/music/">すべてのアルバムを見る</a></p>}
-    </div>
-  </section>
+  {albums.length > 0 && (
+    <section class="section" id="albums">
+      <div class="container reveal">
+        <p class="section__label">ALBUM</p>
+        <h2 class="section__title">ゆっくり流せる、夜のためのアルバム。</h2>
+        <AlbumShelf albums={albums} limit={8} />
+        {albums.length > 8 && <p class="more"><a href="/music/">すべてのアルバムを見る</a></p>}
+      </div>
+    </section>
+  )}
 
-  <section class="section" id="tracks">
-    <div class="container reveal">
-      <p class="section__label">NEW SONGS</p>
-      <h2 class="section__title">新しい歌。</h2>
-      <TrackList tracks={tracks} limit={6} />
-      <p class="more"><a href="/music/">楽曲をもっと見る</a></p>
-    </div>
-  </section>
+  {tracks.length > 0 && (
+    <section class="section" id="tracks">
+      <div class="container reveal">
+        <p class="section__label">NEW SONGS</p>
+        <h2 class="section__title">新しい歌。</h2>
+        <TrackList tracks={tracks} limit={6} />
+        {tracks.length > 6 && <p class="more"><a href="/music/">楽曲をもっと見る</a></p>}
+      </div>
+    </section>
+  )}
 
   <section class="section" id="about">
     <div class="container reveal about">
