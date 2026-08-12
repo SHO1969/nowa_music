@@ -10,6 +10,10 @@
   --media-bg: #000;
   --hero-scrim-near: rgba(7, 13, 28, 0.35);
   --hero-scrim-far: rgba(7, 13, 28, 0.75);
+  --hero-scrim-strong: rgba(7, 13, 28, 0.85);
+  --hero-scrim-mid: rgba(7, 13, 28, 0.45);
+  --hero-scrim-soft: rgba(7, 13, 28, 0.12);
+  --hero-scrim-none: rgba(7, 13, 28, 0);
   --profile-scrim-near: rgba(7, 13, 28, 0.1);
   --profile-scrim-far: rgba(7, 13, 28, 0.45);
   --bg-glow: rgba(157, 180, 224, 0.1);

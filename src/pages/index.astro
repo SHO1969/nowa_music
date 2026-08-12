@@ -10,6 +10,22 @@ import { activeLinks } from '../lib/links.js';
 // ヒーロー画像はビルド時にwebpへ変換・縮小する（元は900x1600の1.3MB）
 const hero = await getImage({ src: heroSource, format: 'webp', width: 900, quality: 78 });
 
+// PC用の横長カット。src/assets/hero-desktop.（jpg|jpeg|png|webp）を置くと自動で使われる。
+// 未配置ならスマホ用画像にフォールバックするので、ビルドは壊れない。
+const desktopCandidates = import.meta.glob('../assets/hero-desktop.{jpg,jpeg,png,webp}', {
+  eager: true,
+  import: 'default',
+});
+const heroDesktopSource = Object.values(desktopCandidates)[0] ?? null;
+const heroDesktop = heroDesktopSource
+  ? await getImage({ src: heroDesktopSource, format: 'webp', width: 1920, quality: 78 })
+  : null;
+
+const heroStyle = [
+  `--hero-image: url(${hero.src})`,
+  `--hero-image-desktop: url(${(heroDesktop ?? hero).src})`,
+].join('; ');
+
 const { albums } = buildCatalog(raw);
 const links = activeLinks();
 // ヒーローの再生ボタンは最新のアルバム
@@ -20,7 +36,7 @@ const tonightPlay = tonight ? `${tonight.kind ?? 'video'}:${tonight.id}` : '';
 <BaseLayout>
   <main>
     <section class="hero">
-      <div class="hero__art" style={`--hero-image: url(${hero.src})`}></div>
+      <div class="hero__art" style={heroStyle}></div>
       <div class="container hero__body">
         <p class="hero__label">NOWA MUSIC</p>
         <h1 class="hero__copy">夜が、<br />ひとりを<br />やさしくする。</h1>
@@ -34,9 +50,9 @@ const tonightPlay = tonight ? `${tonight.kind ?? 'video'}:${tonight.id}` : '';
 
     <section class="section words">
       <div class="container">
-        <p class="reveal">言えなかった気持ち、忘れられない名前、あの頃の恋。</p>
-        <p class="reveal">そして、一日をやり終えて、ひとりになった夜の時間。</p>
-        <p class="reveal">大人になった今だからわかる感情を、静かな歌にしています。</p>
+        <p class="reveal">言えないまま、終わってしまった恋がある。</p>
+        <p class="reveal">忘れたはずの名前が、ふいに浮かぶ夜がある。</p>
+        <p class="reveal">その気持ちに、そっと歌をつけています。</p>
       </div>
     </section>
 
@@ -44,7 +60,7 @@ const tonightPlay = tonight ? `${tonight.kind ?? 'video'}:${tonight.id}` : '';
       <section class="section" id="albums">
         <div class="container reveal">
           <p class="section__label">ALBUM</p>
-          <h2 class="section__title">ゆっくり流せる、夜のためのアルバム。</h2>
+          <h2 class="section__title">眠りにつくまでの時間に、そっと。</h2>
           <AlbumShelf albums={albums} limit={8} />
           {albums.length > 8 && <p class="more"><a href="/music/">すべてのアルバムを見る</a></p>}
         </div>
@@ -88,13 +104,29 @@ const tonightPlay = tonight ? `${tonight.kind ?? 'video'}:${tonight.id}` : '';
   .hero__art {
     position: absolute;
     inset: 0;
-    /* --hero-image は上のインラインstyleで最適化済み画像のURLが入る。
+    /* --hero-image / --hero-image-desktop は上のインラインstyleで最適化済み画像のURLが入る。
        画像を外した場合は none に落ちてグラデーションだけが残る。 */
     background-image:
       linear-gradient(180deg, var(--hero-scrim-near) 0%, var(--hero-scrim-far) 55%, var(--bg-deep) 100%),
       var(--hero-image, none);
     background-size: cover;
     background-position: center 20%;
+  }
+  /* 横長のPC幅では縦長写真の上下が大きく切られ、顔が上に寄って暗く沈む。
+     暗幕をコピーの乗る左下だけに寄せ、顔のある中央〜右上は薄くする。 */
+  @media (min-width: 48rem) {
+    .hero__art {
+      background-image:
+        linear-gradient(180deg, var(--hero-scrim-none) 62%, var(--bg-deep) 100%),
+        linear-gradient(
+          to top right,
+          var(--hero-scrim-strong) 0%,
+          var(--hero-scrim-mid) 45%,
+          var(--hero-scrim-soft) 100%
+        ),
+        var(--hero-image-desktop, var(--hero-image, none));
+      background-position: center 25%;
+    }
   }
   .hero__body { position: relative; }
   .hero__label {
