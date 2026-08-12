@@ -38,14 +38,18 @@ const tonightPlay = tonight ? `${tonight.kind ?? 'video'}:${tonight.id}` : '';
     <section class="hero">
       <div class="hero__art" style={heroStyle}></div>
       <div class="container hero__body">
-        <p class="hero__label">NOWA MUSIC</p>
-        <h1 class="hero__copy">夜が、<br />ひとりを<br />やさしくする。</h1>
+        <p class="hero__label">A J-POP BALLAD PROJECT</p>
+        <h1 class="hero__brand">NOWA MUSIC</h1>
+        <p class="hero__copy">眠れない夜に、<br />ひとつの恋の物語を。</p>
         {tonight && (
           <button class="hero__play" type="button" data-play={tonightPlay} data-title={tonight.title}>
-            ▶ 今夜の1枚
+            <span>今夜の1枚を聴く</span>
+            <span class="hero__play-arrow" aria-hidden="true">→</span>
           </button>
         )}
       </div>
+      <p class="hero__meta" aria-hidden="true">TOKYO · NIGHT · <span id="hero-clock"></span></p>
+      <div class="hero__scroll" aria-hidden="true"><span>SCROLL</span></div>
     </section>
 
     <section class="section words">
@@ -59,8 +63,10 @@ const tonightPlay = tonight ? `${tonight.kind ?? 'video'}:${tonight.id}` : '';
     {albums.length > 0 && (
       <section class="section" id="albums">
         <div class="container reveal">
-          <p class="section__label">ALBUM</p>
-          <h2 class="section__title">眠りにつくまでの時間に、そっと。</h2>
+          <div class="section__head">
+            <p class="section__label">ALBUM</p>
+            <h2 class="section__title">眠りにつくまでの時間に、そっと。</h2>
+          </div>
           <AlbumShelf albums={albums} limit={8} />
           {albums.length > 8 && <p class="more"><a href="/music/">すべてのアルバムを見る</a></p>}
         </div>
@@ -69,8 +75,10 @@ const tonightPlay = tonight ? `${tonight.kind ?? 'video'}:${tonight.id}` : '';
 
     <section class="section" id="about">
       <div class="container reveal about">
-        <p class="section__label">ABOUT</p>
-        <h2 class="section__title">Nowa について</h2>
+        <div class="section__head">
+          <p class="section__label">ABOUT</p>
+          <h2 class="section__title">Nowa について</h2>
+        </div>
         <p>眠れない夜、疲れた夜、ひとりで過ごす時間に。<br />オリジナルの単曲と、ゆっくり流せる1時間のプレイリストをお届けしています。</p>
         <p class="more"><a href="/about/">もっと読む</a></p>
       </div>
@@ -79,11 +87,18 @@ const tonightPlay = tonight ? `${tonight.kind ?? 'video'}:${tonight.id}` : '';
     {links.length > 0 && (
       <section class="section" id="listen">
         <div class="container reveal">
-          <p class="section__label">LISTEN</p>
-          <h2 class="section__title">聴けるところ</h2>
+          <div class="section__head">
+            <p class="section__label">LISTEN</p>
+            <h2 class="section__title">聴けるところ</h2>
+          </div>
           <ul class="listen">
             {links.map((link) => (
-              <li><a href={link.url} target="_blank" rel="noopener">{link.label}</a></li>
+              <li>
+                <a href={link.url} target="_blank" rel="noopener">
+                  <span>{link.label}</span>
+                  <span class="listen__arrow" aria-hidden="true">↗</span>
+                </a>
+              </li>
             ))}
           </ul>
         </div>
@@ -98,7 +113,7 @@ const tonightPlay = tonight ? `${tonight.kind ?? 'video'}:${tonight.id}` : '';
     min-height: 100svh;
     display: flex;
     align-items: flex-end;
-    padding-block: 8rem 4rem;
+    padding-block: 9rem 7rem;
     overflow: hidden;
   }
   .hero__art {
@@ -130,58 +145,117 @@ const tonightPlay = tonight ? `${tonight.kind ?? 'video'}:${tonight.id}` : '';
   }
   .hero__body { position: relative; }
   .hero__label {
-    font-size: 0.68rem;
+    font-family: var(--font-display);
+    font-size: 0.8rem;
     letter-spacing: 0.36em;
+    text-transform: uppercase;
     color: var(--accent);
-    margin: 0 0 1.5rem;
+    margin: 0 0 1.75rem;
+  }
+  .hero__brand {
+    font-family: var(--font-display);
+    font-size: clamp(2.75rem, 11vw, 8rem);
+    font-weight: 300;
+    line-height: 1;
+    letter-spacing: 0.02em;
+    margin: 0 0 1.75rem;
   }
   .hero__copy {
-    font-size: clamp(1.9rem, 8vw, 3.2rem);
-    font-weight: 200;
-    line-height: 1.8;
-    margin: 0 0 2.5rem;
+    font-size: clamp(1.05rem, 3.4vw, 1.5rem);
+    font-weight: 300;
+    line-height: 2;
+    margin: 0 0 2.75rem;
   }
   .hero__play {
     display: inline-flex;
     align-items: center;
-    gap: 0.6rem;
-    padding: 0.85rem 1.8rem;
-    border: 1px solid var(--accent);
-    border-radius: 999px;
+    justify-content: space-between;
+    gap: 2rem;
+    min-width: min(16rem, 100%);
+    padding: 1rem 1.5rem;
+    border: 1px solid var(--line);
     background: none;
     color: var(--text);
     font: inherit;
-    font-size: 0.8rem;
-    letter-spacing: 0.18em;
+    font-size: 0.85rem;
+    letter-spacing: 0.16em;
     cursor: pointer;
-    transition: background 0.5s ease, color 0.5s ease;
+    transition: border-color 0.5s ease, color 0.5s ease;
   }
-  .hero__play:hover { background: var(--accent); color: var(--bg-deep); }
+  .hero__play:hover,
+  .hero__play:focus-visible { border-color: var(--accent); color: var(--accent); }
+  .hero__play-arrow { transition: transform 0.5s ease; }
+  .hero__play:hover .hero__play-arrow { transform: translateX(0.25rem); }
 
-  .words { text-align: center; }
+  /* 右端の縦書き。狭い画面では幅を圧迫するので出さない */
+  .hero__meta {
+    display: none;
+    position: absolute;
+    right: 1.25rem;
+    bottom: 7rem;
+    margin: 0;
+    writing-mode: vertical-rl;
+    font-family: var(--font-display);
+    font-size: 0.7rem;
+    letter-spacing: 0.3em;
+    color: var(--text-dim);
+  }
+  @media (min-width: 48rem) {
+    .hero__meta { display: block; }
+  }
+
+  .hero__scroll {
+    position: absolute;
+    left: 50%;
+    bottom: 1.25rem;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    font-family: var(--font-display);
+    font-size: 0.65rem;
+    letter-spacing: 0.3em;
+    color: var(--text-dim);
+  }
+  .hero__scroll::after {
+    content: "";
+    width: 1px;
+    height: 3rem;
+    background: var(--line);
+    animation: scroll-hint 2.8s ease-in-out infinite;
+  }
+  @keyframes scroll-hint {
+    0%, 100% { opacity: 0.3; transform: scaleY(0.6); transform-origin: top; }
+    50% { opacity: 1; transform: scaleY(1); transform-origin: top; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .hero__scroll::after { animation: none; opacity: 0.6; }
+  }
+
+  .words { text-align: center; padding-block: clamp(6rem, 16vw, 11rem); }
   .words p {
-    font-size: clamp(1rem, 3.6vw, 1.25rem);
-    line-height: 2.4;
-    margin: 0 0 1.5rem;
+    font-size: clamp(1.1rem, 4vw, 1.5rem);
+    line-height: 2.6;
+    margin: 0 0 2rem;
   }
   .words p:nth-child(2) { transition-delay: 0.15s; }
   .words p:nth-child(3) { transition-delay: 0.3s; }
 
-  .more { margin-top: 2.5rem; font-size: 0.78rem; letter-spacing: 0.18em; }
-  .more a { color: var(--accent); border-bottom: 1px solid var(--line); padding-bottom: 0.2rem; }
-
   .about p { max-width: 34rem; }
-
-  .listen {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1rem 2.5rem;
-    font-size: 0.85rem;
-    letter-spacing: 0.16em;
-  }
-  .listen a { border-bottom: 1px solid var(--line); padding-bottom: 0.25rem; }
-  .listen a:hover { color: var(--accent); }
 </style>
+
+<script>
+  // 右端の縦書きに閲覧者の現在時刻を出す。JSが動かない環境では時刻だけ出ない。
+  const clock = document.getElementById('hero-clock');
+  if (clock) {
+    const render = () => {
+      const now = new Date();
+      const hh = String(now.getHours()).padStart(2, '0');
+      const mm = String(now.getMinutes()).padStart(2, '0');
+      clock.textContent = `${hh}:${mm}`;
+    };
+    render();
+    setInterval(render, 30000);
+  }
+</script>

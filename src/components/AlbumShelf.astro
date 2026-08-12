@@ -1,6 +1,16 @@
 ---
 const { albums = [], limit } = Astro.props;
-const items = typeof limit === 'number' ? albums.slice(0, limit) : albums;
+const source = typeof limit === 'number' ? albums.slice(0, limit) : albums;
+
+// 「2026 · 12曲」のような1行を作る。公開日が壊れていれば年を出さない。
+const items = source.map((album) => {
+  const year = Number(String(album.publishedAt).slice(0, 4));
+  const parts = [
+    Number.isNaN(year) ? null : String(year),
+    album.itemCount > 0 ? `${album.itemCount}曲` : null,
+  ].filter(Boolean);
+  return { ...album, meta: parts.join(' · ') };
+});
 ---
 
 <div class="shelf">
@@ -20,7 +30,7 @@ const items = typeof limit === 'number' ? albums.slice(0, limit) : albums;
         <span class="album__play">▶</span>
       </span>
       <span class="album__title">{album.title}</span>
-      {album.itemCount > 0 && <span class="album__meta">{album.itemCount}曲</span>}
+      {album.meta && <span class="album__meta">{album.meta}</span>}
     </button>
   ))}
 </div>
@@ -28,8 +38,12 @@ const items = typeof limit === 'number' ? albums.slice(0, limit) : albums;
 <style>
   .shelf {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
-    gap: 2rem 1.5rem;
+    grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr));
+    gap: 2.5rem 1.75rem;
+  }
+  /* 広い画面では3列にして1枚を大きく見せる */
+  @media (min-width: 64rem) {
+    .shelf { grid-template-columns: repeat(3, 1fr); }
   }
   .album {
     display: block;
@@ -86,14 +100,15 @@ const items = typeof limit === 'number' ? albums.slice(0, limit) : albums;
   .album__title {
     display: block;
     margin-top: 0.9rem;
-    font-size: 0.9rem;
+    font-size: 0.95rem;
     line-height: 1.7;
     overflow-wrap: anywhere;
   }
   .album__meta {
     display: block;
-    margin-top: 0.3rem;
-    font-size: 0.7rem;
+    margin-top: 0.4rem;
+    font-family: var(--font-display);
+    font-size: 0.75rem;
     letter-spacing: 0.2em;
     color: var(--text-dim);
   }

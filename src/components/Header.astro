@@ -8,42 +8,95 @@ const items = [
 
 <header class="header">
   <div class="container header__inner">
-    <a class="header__logo" href="/">NOWA</a>
+    <a class="header__logo" href="/">
+      <span class="header__logo-main">NOWA</span>
+      <span class="header__logo-sub">MUSIC</span>
+    </a>
     <nav class="header__nav" aria-label="メインメニュー">
       {items.map((item) => (
-        <a href={item.href} aria-current={path.startsWith(item.href) ? 'page' : undefined}>
+        <a
+          class="header__link"
+          href={item.href}
+          aria-current={path.startsWith(item.href) ? 'page' : undefined}
+        >
           {item.label}
         </a>
       ))}
+      <a class="header__listen" href="/#listen">
+        LISTEN<span class="header__arrow" aria-hidden="true">↗</span>
+      </a>
     </nav>
   </div>
 </header>
 
 <style>
   .header {
-    position: absolute;
+    position: fixed;
     inset: 0 0 auto;
-    z-index: 10;
-    padding-block: 1.25rem;
+    z-index: 20;
+    height: var(--header-height);
+    display: flex;
+    align-items: center;
+    background: var(--header-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--line);
   }
   .header__inner {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    gap: 1rem;
   }
   .header__logo {
-    font-size: 0.95rem;
-    letter-spacing: 0.34em;
+    display: block;
+    line-height: 1.15;
+  }
+  .header__logo-main {
+    display: block;
+    font-family: var(--font-display);
+    font-size: 1.15rem;
+    letter-spacing: 0.3em;
+  }
+  .header__logo-sub {
+    display: block;
+    font-family: var(--font-display);
+    font-size: 0.6rem;
+    letter-spacing: 0.4em;
+    color: var(--text-dim);
   }
   .header__nav {
     display: flex;
-    gap: 1.5rem;
-    font-size: 0.7rem;
+    align-items: center;
+    gap: 1.25rem;
+    font-family: var(--font-display);
+    font-size: 0.78rem;
     letter-spacing: 0.24em;
     color: var(--text-dim);
   }
-  .header__nav a:hover,
-  .header__nav a[aria-current='page'] {
-    color: var(--accent);
+  .header__link:hover,
+  .header__link[aria-current='page'] { color: var(--accent); }
+  .header__listen {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.5rem 0.9rem;
+    border: 1px solid var(--line);
+    color: var(--text);
+    transition: border-color 0.4s ease, color 0.4s ease;
+  }
+  .header__listen:hover { border-color: var(--accent); color: var(--accent); }
+  .header__arrow { font-size: 0.7em; }
+
+  /* スマホではLISTENの文字が詰まるので余白と字間を詰める */
+  @media (max-width: 26rem) {
+    .header__nav { gap: 0.85rem; font-size: 0.7rem; letter-spacing: 0.16em; }
+    .header__listen { padding: 0.45rem 0.7rem; }
+  }
+
+  /* 342px未満だとロゴ・ナビが画面外にはみ出すため、ロゴ下段を隠して幅を稼ぐ。
+     26remのブレークポイントは375pxも含んでしまい下段が消えるため、専用の狭いブレークポイントにする */
+  @media (max-width: 21.375rem) {
+    .header__logo-sub { display: none; }
   }
 </style>

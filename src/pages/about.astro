@@ -21,8 +21,10 @@ const portrait = await getImage({ src: portraitSource, format: 'webp', width: 90
   <main>
     <section class="section head">
       <div class="container">
-        <p class="section__label">ABOUT</p>
-        <h1 class="section__title">Nowa</h1>
+        <div class="section__head">
+          <p class="section__label">ABOUT</p>
+          <h1 class="section__title page__title">Nowa</h1>
+        </div>
       </div>
     </section>
 
@@ -54,10 +56,17 @@ const portrait = await getImage({ src: portraitSource, format: 'webp', width: 90
     {links.length > 0 && (
       <section class="section">
         <div class="container reveal">
-          <p class="section__label">LISTEN</p>
+          <div class="section__head">
+            <h2 class="section__label">LISTEN</h2>
+          </div>
           <ul class="listen">
             {links.map((link) => (
-              <li><a href={link.url} target="_blank" rel="noopener">{link.label}</a></li>
+              <li>
+                <a href={link.url} target="_blank" rel="noopener">
+                  <span>{link.label}</span>
+                  <span class="listen__arrow" aria-hidden="true">↗</span>
+                </a>
+              </li>
             ))}
           </ul>
         </div>
@@ -117,16 +126,4 @@ const portrait = await getImage({ src: portraitSource, format: 'webp', width: 90
   @media (max-width: 26rem) {
     .facts__row { grid-template-columns: 1fr; gap: 0.2rem; }
   }
-  .listen {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1rem 2.5rem;
-    font-size: 0.85rem;
-    letter-spacing: 0.16em;
-  }
-  .listen a { border-bottom: 1px solid var(--line); padding-bottom: 0.25rem; }
-  .listen a:hover { color: var(--accent); }
 </style>
