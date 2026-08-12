@@ -93,4 +93,10 @@ const items = [
     .header__nav { gap: 0.85rem; font-size: 0.7rem; letter-spacing: 0.16em; }
     .header__listen { padding: 0.45rem 0.7rem; }
   }
+
+  /* 342px未満だとロゴ・ナビが画面外にはみ出すため、ロゴ下段を隠して幅を稼ぐ。
+     26remのブレークポイントは375pxも含んでしまい下段が消えるため、専用の狭いブレークポイントにする */
+  @media (max-width: 21.375rem) {
+    .header__logo-sub { display: none; }
+  }
 </style>

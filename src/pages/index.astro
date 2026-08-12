@@ -48,7 +48,7 @@ const tonightPlay = tonight ? `${tonight.kind ?? 'video'}:${tonight.id}` : '';
           </button>
         )}
       </div>
-      <p class="hero__meta" aria-hidden="true">TOKYO · NIGHT · <time id="hero-clock"></time></p>
+      <p class="hero__meta" aria-hidden="true">TOKYO · NIGHT · <span id="hero-clock"></span></p>
       <div class="hero__scroll" aria-hidden="true"><span>SCROLL</span></div>
     </section>
 
@@ -207,7 +207,7 @@ const tonightPlay = tonight ? `${tonight.kind ?? 'video'}:${tonight.id}` : '';
   .hero__scroll {
     position: absolute;
     left: 50%;
-    bottom: 2rem;
+    bottom: 1.25rem;
     transform: translateX(-50%);
     display: flex;
     flex-direction: column;
@@ -254,7 +254,6 @@ const tonightPlay = tonight ? `${tonight.kind ?? 'video'}:${tonight.id}` : '';
       const hh = String(now.getHours()).padStart(2, '0');
       const mm = String(now.getMinutes()).padStart(2, '0');
       clock.textContent = `${hh}:${mm}`;
-      clock.setAttribute('datetime', `${hh}:${mm}`);
     };
     render();
     setInterval(render, 30000);

@@ -4,7 +4,7 @@ const source = typeof limit === 'number' ? albums.slice(0, limit) : albums;
 
 // 「2026 · 12曲」のような1行を作る。公開日が壊れていれば年を出さない。
 const items = source.map((album) => {
-  const year = new Date(album.publishedAt).getFullYear();
+  const year = Number(String(album.publishedAt).slice(0, 4));
   const parts = [
     Number.isNaN(year) ? null : String(year),
     album.itemCount > 0 ? `${album.itemCount}曲` : null,

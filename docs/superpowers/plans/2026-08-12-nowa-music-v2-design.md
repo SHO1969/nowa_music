@@ -16,7 +16,7 @@
 - **色は `src/styles/theme.css` の CSS変数のみ**。色リテラル（`#...` / `rgba(...)`）をコンポーネントに直書きしない。新しい色が要るときは `:root` に変数を追加してから参照する
 - 配色そのものは変更しない（`--bg-deep` `--text` `--accent` `--line` の値を書き換えない）
 - 外部依存を追加しない（npm パッケージを増やさない）。書体は Google Fonts の `<link>` のみ
-- 動きは fade in / fade up まで。`prefers-reduced-motion` の尊重を維持する
+- 動きは fade と、SCROLL誘導の罫線のスケール程度まで。`prefers-reduced-motion` の尊重を維持する
 - スマホ優先。**375px で横スクロールを発生させない**
 - 既存の29テストを維持する（`npm test`）
 - `src/lib/catalog.js`・`src/lib/embed.js`・`scripts/fetch-youtube.mjs`・`src/components/Player.astro`・`src/data/youtube.json`・`.github/workflows/` は変更しない
