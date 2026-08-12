@@ -63,8 +63,10 @@ const tonightPlay = tonight ? `${tonight.kind ?? 'video'}:${tonight.id}` : '';
     {albums.length > 0 && (
       <section class="section" id="albums">
         <div class="container reveal">
-          <p class="section__label">ALBUM</p>
-          <h2 class="section__title">眠りにつくまでの時間に、そっと。</h2>
+          <div class="section__head">
+            <p class="section__label">ALBUM</p>
+            <h2 class="section__title">眠りにつくまでの時間に、そっと。</h2>
+          </div>
           <AlbumShelf albums={albums} limit={8} />
           {albums.length > 8 && <p class="more"><a href="/music/">すべてのアルバムを見る</a></p>}
         </div>
@@ -73,8 +75,10 @@ const tonightPlay = tonight ? `${tonight.kind ?? 'video'}:${tonight.id}` : '';
 
     <section class="section" id="about">
       <div class="container reveal about">
-        <p class="section__label">ABOUT</p>
-        <h2 class="section__title">Nowa について</h2>
+        <div class="section__head">
+          <p class="section__label">ABOUT</p>
+          <h2 class="section__title">Nowa について</h2>
+        </div>
         <p>眠れない夜、疲れた夜、ひとりで過ごす時間に。<br />オリジナルの単曲と、ゆっくり流せる1時間のプレイリストをお届けしています。</p>
         <p class="more"><a href="/about/">もっと読む</a></p>
       </div>
@@ -83,11 +87,18 @@ const tonightPlay = tonight ? `${tonight.kind ?? 'video'}:${tonight.id}` : '';
     {links.length > 0 && (
       <section class="section" id="listen">
         <div class="container reveal">
-          <p class="section__label">LISTEN</p>
-          <h2 class="section__title">聴けるところ</h2>
+          <div class="section__head">
+            <p class="section__label">LISTEN</p>
+            <h2 class="section__title">聴けるところ</h2>
+          </div>
           <ul class="listen">
             {links.map((link) => (
-              <li><a href={link.url} target="_blank" rel="noopener">{link.label}</a></li>
+              <li>
+                <a href={link.url} target="_blank" rel="noopener">
+                  <span>{link.label}</span>
+                  <span class="listen__arrow" aria-hidden="true">↗</span>
+                </a>
+              </li>
             ))}
           </ul>
         </div>
@@ -222,32 +233,16 @@ const tonightPlay = tonight ? `${tonight.kind ?? 'video'}:${tonight.id}` : '';
     .hero__scroll::after { animation: none; opacity: 0.6; }
   }
 
-  .words { text-align: center; }
+  .words { text-align: center; padding-block: clamp(6rem, 16vw, 11rem); }
   .words p {
-    font-size: clamp(1rem, 3.6vw, 1.25rem);
-    line-height: 2.4;
-    margin: 0 0 1.5rem;
+    font-size: clamp(1.1rem, 4vw, 1.5rem);
+    line-height: 2.6;
+    margin: 0 0 2rem;
   }
   .words p:nth-child(2) { transition-delay: 0.15s; }
   .words p:nth-child(3) { transition-delay: 0.3s; }
 
-  .more { margin-top: 2.5rem; font-size: 0.78rem; letter-spacing: 0.18em; }
-  .more a { color: var(--accent); border-bottom: 1px solid var(--line); padding-bottom: 0.2rem; }
-
   .about p { max-width: 34rem; }
-
-  .listen {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1rem 2.5rem;
-    font-size: 0.85rem;
-    letter-spacing: 0.16em;
-  }
-  .listen a { border-bottom: 1px solid var(--line); padding-bottom: 0.25rem; }
-  .listen a:hover { color: var(--accent); }
 </style>
 
 <script>
