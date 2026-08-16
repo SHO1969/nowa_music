@@ -3,6 +3,7 @@ import '../styles/theme.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import Player from '../components/Player.astro';
+import { MEASUREMENT_ID, isAnalyticsEnabled } from '../lib/analytics.js';
 
 const {
   title,
@@ -10,6 +11,7 @@ const {
 } = Astro.props;
 
 const fullTitle = title ? `${title} | Nowa Music` : 'Nowa Music';
+const analyticsEnabled = isAnalyticsEnabled(import.meta.env.PROD);
 ---
 
 <!doctype html>
@@ -32,6 +34,20 @@ const fullTitle = title ? `${title} | Nowa Music` : 'Nowa Music';
       rel="stylesheet"
       href="https://fonts.googleapis.com/css2?family=Cormorant:wght@300;400&family=Noto+Serif+JP:wght@200;300;400&display=swap"
     />
+    {analyticsEnabled && (
+      <>
+        <script async is:inline src={`https://www.googletagmanager.com/gtag/js?id=${MEASUREMENT_ID}`}></script>
+        <script is:inline define:vars={{ measurementId: MEASUREMENT_ID }}>
+          window.dataLayer = window.dataLayer || [];
+          function gtag() { dataLayer.push(arguments); }
+          // Astroがこのスクリプトを即時実行関数で包むため、明示的にグローバルへ出す。
+          // これをしないと、後からイベント計測を足したときにgtagが見つからない。
+          window.gtag = gtag;
+          gtag('js', new Date());
+          gtag('config', measurementId);
+        </script>
+      </>
+    )}
   </head>
   <body>
     <Header />
