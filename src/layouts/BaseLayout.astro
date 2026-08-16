@@ -3,7 +3,7 @@ import '../styles/theme.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import Player from '../components/Player.astro';
-import { MEASUREMENT_ID, isAnalyticsEnabled } from '../lib/analytics.js';
+import { MEASUREMENT_ID, ANALYTICS_HOSTNAME, isAnalyticsEnabled } from '../lib/analytics.js';
 
 const {
   title,
@@ -37,14 +37,17 @@ const analyticsEnabled = isAnalyticsEnabled(import.meta.env.PROD);
     {analyticsEnabled && (
       <>
         <script async is:inline src={`https://www.googletagmanager.com/gtag/js?id=${MEASUREMENT_ID}`}></script>
-        <script is:inline define:vars={{ measurementId: MEASUREMENT_ID }}>
+        <script is:inline define:vars={{ measurementId: MEASUREMENT_ID, analyticsHostname: ANALYTICS_HOSTNAME }}>
           window.dataLayer = window.dataLayer || [];
           function gtag() { dataLayer.push(arguments); }
           // Astroがこのスクリプトを即時実行関数で包むため、明示的にグローバルへ出す。
           // これをしないと、後からイベント計測を足したときにgtagが見つからない。
           window.gtag = gtag;
-          gtag('js', new Date());
-          gtag('config', measurementId);
+          // 実際のドメインで見られたときだけ記録する（ローカル確認やgithub.io経由を除外）。
+          if (location.hostname === analyticsHostname) {
+            gtag('js', new Date());
+            gtag('config', measurementId);
+          }
         </script>
       </>
     )}

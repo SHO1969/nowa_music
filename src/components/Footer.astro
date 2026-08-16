@@ -15,6 +15,7 @@ const year = new Date().getFullYear();
     {CONTACT_EMAIL && (
       <p class="footer__mail"><a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a></p>
     )}
+    <p class="footer__note">当サイトではGoogleアナリティクスを使用しています。</p>
     <p class="footer__copy">© {year} Nowa Music</p>
   </div>
 </footer>
@@ -36,5 +37,10 @@ const year = new Date().getFullYear();
   }
   .footer__links a:hover { color: var(--accent); }
   .footer__mail { font-size: 0.8rem; margin: 1.5rem 0 0; }
+  .footer__note {
+    font-size: 0.68rem;
+    line-height: 1.9;
+    margin: 2rem 0 0;
+  }
   .footer__copy { font-size: 0.7rem; letter-spacing: 0.2em; margin: 2rem 0 0; }
 </style>
